@@ -1,21 +1,110 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { View } from "react-native";
+import {createAppContainer, NavigationContainer, createSwitchNavigator } from "react-navigation";
+import {createStackNavigator} from "react-navigation-stack"
+import IndexScreen from "./src/screens/IndexScreen";
+import { Provider } from "./src/context/RecipeContext";
+import RecipeShowScreen from "./src/screens/RecipeShowScreen";
+import RecipeBrowseScreen from "./src/screens/RecipeBrowseScreen";
+import CreateScreen from "./src/screens/CreateRecipe";
+import MealPlan from "./src/screens/MealPlan";
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import ListScreen from "./src/screens/ListScreen";
+import { Entypo } from '@expo/vector-icons'; 
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+
+const navigator = createStackNavigator({
+  Index:  {
+    screen: IndexScreen,
   },
+  Recipe: RecipeShowScreen,
+  RecipeBrowse: {
+    screen: RecipeBrowseScreen,
+    navigationOptions: {
+      title: 'Browse'
+    }
+  },
+  Create: CreateScreen,
+},
+ {
+  defaultNavigationOptions: {
+    title: 'Home'
+  }
 });
+
+const AppTabNavigator = createMaterialBottomTabNavigator(
+  {
+    Home: {
+      screen: IndexScreen,
+      navigationOptions: {
+        tabBarIcon: (
+          <View>
+            <Entypo name="home" size={24} color="black" />
+          </View>
+        )
+      }
+    },
+    Plan: {
+      screen: MealPlan,
+      navigationOptions: {
+        tabBarIcon: (
+          <View>
+            <Entypo name="calendar" size={24} color="black" />
+          </View>
+        )
+      }
+    },
+    List: {
+      screen: ListScreen,
+      navigationOptions: {
+        tabBarIcon: (
+          <View>
+            <Entypo name="list" size={24} color="black" />
+          </View>
+        )
+      }
+    },
+    Browse: {
+      screen: RecipeBrowseScreen,
+      navigationOptions: {
+        tabBarIcon: (
+          <View>
+            <Entypo name="book" size={24} color="black" />
+          </View>
+        )
+      }
+    }
+  },
+  {
+    showLabel: 'false',
+    initialRouteName: 'Home',
+    activeColor: '#ffffff',
+    inactiveColor: '#3e2465',
+    barStyle: { backgroundColor: '#85A7FF' },
+    
+  }
+)
+
+const MainNavigator = createSwitchNavigator({
+  dashboard: {
+    screen: AppTabNavigator
+},
+  Create: CreateScreen,
+  Recipe: RecipeShowScreen
+}, 
+{
+  initialRouteName: 'dashboard'
+});
+
+
+const App =  createAppContainer(MainNavigator);
+ export default () => {
+   return (
+   <Provider>
+      <App/>
+    </Provider>
+   )
+ };
+
+
