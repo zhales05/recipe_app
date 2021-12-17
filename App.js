@@ -4,15 +4,15 @@ import {createAppContainer, NavigationContainer, createSwitchNavigator } from "r
 import {createStackNavigator} from "react-navigation-stack"
 import IndexScreen from "./src/screens/IndexScreen";
 import { Provider } from "./src/context/RecipeContext";
+import { Provider as ListProvider } from "./src/context/ListContext";
 import RecipeShowScreen from "./src/screens/RecipeShowScreen";
 import RecipeBrowseScreen from "./src/screens/RecipeBrowseScreen";
+import DayPlanScreen from "./src/screens/DayPlanScreen";
 import CreateScreen from "./src/screens/CreateRecipe";
 import MealPlan from "./src/screens/MealPlan";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import ListScreen from "./src/screens/ListScreen";
 import { Entypo } from '@expo/vector-icons'; 
-
-
 
 const navigator = createStackNavigator({
   Index:  {
@@ -26,6 +26,7 @@ const navigator = createStackNavigator({
     }
   },
   Create: CreateScreen,
+  MealPlan: MealPlan
 },
  {
   defaultNavigationOptions: {
@@ -91,7 +92,8 @@ const MainNavigator = createSwitchNavigator({
     screen: AppTabNavigator
 },
   Create: CreateScreen,
-  Recipe: RecipeShowScreen
+  Recipe: RecipeShowScreen,
+  DayPlan: DayPlanScreen
 }, 
 {
   initialRouteName: 'dashboard'
@@ -102,7 +104,9 @@ const App =  createAppContainer(MainNavigator);
  export default () => {
    return (
    <Provider>
+     <ListProvider>
       <App/>
+      </ListProvider>
     </Provider>
    )
  };

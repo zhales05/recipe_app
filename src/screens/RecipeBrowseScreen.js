@@ -45,7 +45,7 @@ const RecipeBrowseScreen = ({ navigation }) => {
                         <Text style={styles.title}>{item.title}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => deleteRecipe(item.id)}>
-                            <Feather name="star" size={24} color="black" />
+                            <Feather name="trash" size={24} color="black" />
                         </TouchableOpacity>
                     </View>
               }}/>

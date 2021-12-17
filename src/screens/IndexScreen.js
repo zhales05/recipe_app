@@ -1,4 +1,4 @@
-import React, { useContext} from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity, Image } from 'react-native';
 import Header from "../navigation/header";
 

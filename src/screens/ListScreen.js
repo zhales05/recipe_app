@@ -1,11 +1,9 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TextInput, StyleSheet, FlatList, Modal, TouchableOpacity, Pressable } from 'react-native';
 import { Context } from "../context/RecipeContext";
-import { Feather } from '@expo/vector-icons';
+import { Context as ListContext } from "../context/ListContext";
 import Header from "../navigation/header";
-import CalendarPicker from 'react-native-calendar-picker';
 import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons'; 
 
 
 const data = () => {
@@ -18,22 +16,32 @@ const data = () => {
 }
 const ListScreen = ({navigation }) => {
     const { state, addRecipe, deleteRecipe } = useContext(Context);
-    const [meals, setMeals] = useState([]);
+    const { state: listState, addListRecipe, deleteListRecipe } = useContext(ListContext);
+
+    const [items, setItems] = useState([]);
     const [activeMeal, setActiveMeal] = useState();
     const [modalVisible, setModalVisible] = useState(false);
     const [recipeModalVisible, setRecipeModalVisible] = useState(false);
     const [ingredient, setIngredientName] = useState('');
+    const [quantity, setQuantity] = useState('');
     const [mealName, setMealName] = useState('');
 
-    const addMeal = (name) => {
+    const addItem = (name, quantity) => {
         console.log(name)
-        setMeals([...meals, {
-            mealName: name,
-            recipe: [],
+        setItems([...items, {
+            title: name,
+            quantity: quantity,
             id: Math.floor(Math.random() * 99999),
         }])
-        setModalVisible(!modalVisible);
+        setRecipeModalVisible(!recipeModalVisible);
         setMealName('');
+    }
+
+    const addToItems = () => {
+        listState.map((recipe) => (
+            console.log(recipe)
+        ));
+        //console.log(listState[1]);
     }
 
     const addRecipeToMeal = (recipe) => {
@@ -43,36 +51,6 @@ const ListScreen = ({navigation }) => {
 
 
     return <View>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                setModalVisible(!modalVisible);
-            }}
-        >
-
-            <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <View style={styles.exitIcon}>
-                        <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-                            <AntDesign name="close" size={22} color="black" />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.modelStructure}>
-                        <Text style={styles.modalText}>Enter Category Name:</Text>
-                        <TextInput style={styles.input} value={mealName} onChangeText={(text) => { setMealName(text) }} />
-                        <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => addMeal(mealName)}>
-                            <Text style={styles.textStyle}>Add Category</Text>
-                        </Pressable>
-                    </View>
-                </View>
-            </View>
-        </Modal>
-
         <Modal
             animationType="slide"
             transparent={true}
@@ -95,9 +73,11 @@ const ListScreen = ({navigation }) => {
                         <View style={styles.modelStructure}>
                         <Text style={styles.modalText}>Enter Name:</Text>
                         <TextInput style={styles.input} value={ingredient} onChangeText={(text) => { setIngredientName(text) }} />
+                        <Text style={styles.modalText}>Enter Quantity:</Text>
+                        <TextInput style={styles.input} value={quantity} onChangeText={(text) => { setQuantity(text) }} />
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
-                            onPress={() => addMeal(ingredient)}>
+                            onPress={() => addItem(ingredient, quantity)}>
                             <Text style={styles.textStyle}>Add Ingredient</Text>
                         </Pressable>
                     </View>
@@ -109,30 +89,22 @@ const ListScreen = ({navigation }) => {
         <Header title='Shopping List' />
 
         <FlatList
-            data={meals}
+            data={items}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => {
                 return <View>
                     <View style={styles.alignMeal}>
-                    <Text style={styles.subtitle}>{item.mealName}</Text>
-                    <TouchableOpacity style={styles.buttonRecipe} onPress={() => {
-                        setActiveMeal(item);
-                        setRecipeModalVisible(true);
-                    }}>
-                        <Text style={styles.buttonText}>+Add item</Text>
-                    </TouchableOpacity>
-                    </View>
-                    <View>
-                        {item.recipe.map((recipe, index) => (
-                            <View key={index} style={styles.recipeList}><Text>{recipe.title}</Text></View>
-                        ))}
+                    <Text style={styles.subtitle}>{item.quantity} {item.title}</Text>
                     </View>
                 </View>
             }}
         />
-
-        <TouchableOpacity style={styles.addMeal} onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonText}>+Add category</Text>
+        
+        <TouchableOpacity style={styles.addMeal} onPress={() => addToItems()}>
+            <Text style={styles.buttonText}>Auto Generate List</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.addMeal} onPress={() => setRecipeModalVisible(!recipeModalVisible)}>
+            <Text style={styles.buttonText}>Add Item</Text>
         </TouchableOpacity>
     </View>
 }
